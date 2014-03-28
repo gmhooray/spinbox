@@ -30,3 +30,4 @@ var nts = nts || {};
  */
 
 nts.spinbox = nts.spinbox || {};
+nts.spinbox.model = nts.spinbox.model || {};

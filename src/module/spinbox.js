@@ -2,14 +2,14 @@
  * @author    Park ji man
  * @version   0.0.1
  * @desc      Spinbox module by jindo library
- *
  */
 
-nts.spinbox = jindo.$Class({
+nts.spinbox.Spinbox = jindo.$Class({
 
     $init: function (sWrapperId) {
         this._assignElement(sWrapperId);
         this._attachEvents();
+        this._oModel = new nts.spinbox.model.SpinboxModel();
     },
 
     _assignElement: function (sWrapperId) {
@@ -19,39 +19,20 @@ nts.spinbox = jindo.$Class({
         this._welDecreaseBtn = jindo.$Element(this._welSpinboxWrapper.querySelector("._spinbox-decreaseBtn"));
     },
 
-    _inputValidate: function () {
-        var nMaxValue = 300;
-        var nMinValue = 100;
-        var nPrevValue = parseInt(this._welInput.attr("value").replace(/[^[0-9]+/g, ''), 10);
-
-        if (nPrevValue >= nMaxValue) {  //over 300
-            this._welInput.attr("value", nMaxValue);
-
-        } else if (nPrevValue <= nMinValue) { //under 100
-            this._welInput.attr("value", nMinValue);
-
-        } else {
-            this._welInput.attr("value", nPrevValue);
-
-        }
-    },
-
     _increase: function () {
-        var value = parseInt(this._welInput.attr("value"), 10);
-        this._welInput.attr("value", value + 1);
-        this._inputValidate();
+        this._oModel.increaseByOne();
+        this._welInput.attr("value", this._oModel.getValue());
     },
 
     _decrease: function () {
-        var value = parseInt(this._welInput.attr("value"), 10);
-        this._welInput.attr("value", value - 1);
-        this._inputValidate();
+        this._oModel.decreaseByOne();
+        this._welInput.attr("value", this._oModel.getValue());
     },
 
     _startIncreaseInterval: function () {
         this._increase();
         this._timeout = setTimeout(jindo.$Fn(function () {
-            this._interval = setInterval(jindo.$Fn(this._increase, this).bind(),100);
+            this._interval = setInterval(jindo.$Fn(this._increase, this).bind(), 100);
         }, this).bind(), 500);
     },
 
@@ -76,7 +57,10 @@ nts.spinbox = jindo.$Class({
             "mousedown": jindo.$Fn(this._startDecreaseInterval, this).bind(),
             "mouseup": jindo.$Fn(this._clearInterval, this).bind() });
 
-        this._welInput.attach({    //when focusOut from input box : Event
-            "focusout": jindo.$Fn(this._inputValidate, this).bind() });
+//        this._welInput.attach({    //when focusOut from input box : Event
+//            "focusout": jindo.$Fn(function(){
+//                this._oModel.setValue(this._welInput.attr("value"));
+//                this._welInput.attr("value", this._oModel.getValue());
+//            }, this).bind() });
     }
 });
